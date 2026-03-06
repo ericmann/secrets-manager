@@ -295,7 +295,7 @@ class Test_Provider_Encrypted extends WP_UnitTestCase {
 			)
 		);
 
-		$this->assertSame( 'no', $autoload );
+		$this->assertContains( $autoload, array( 'no', 'off' ) );
 	}
 
 	/**

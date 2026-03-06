@@ -251,6 +251,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_key_without_namespace_rejected() {
+		$this->setExpectedIncorrectUsage( 'set_secret' );
+
 		$result = set_secret( 'nonamespace', 'val', $this->cli_context );
 
 		$this->assertFalse( $result );
@@ -272,6 +274,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_empty_key_rejected() {
+		$this->setExpectedIncorrectUsage( 'set_secret' );
+
 		$result = set_secret( '', 'val', $this->cli_context );
 
 		$this->assertFalse( $result );
@@ -281,6 +285,8 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 * @group api
 	 */
 	public function test_invalid_characters_rejected() {
+		$this->setExpectedIncorrectUsage( 'set_secret' );
+
 		$invalid_keys = array(
 			'my plugin/has spaces',
 			'my-plugin/key@value',
