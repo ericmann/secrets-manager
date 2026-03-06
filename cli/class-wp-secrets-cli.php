@@ -438,7 +438,7 @@ class WP_Secrets_CLI extends WP_CLI_Command {
 			WP_CLI::error( 'No active provider.' );
 		}
 
-		if ( ! ( $provider instanceof Provider_Encrypted_Options ) ) {
+		if ( ! ( $provider instanceof WP_Secrets_Provider_Encrypted_Options ) ) {
 			WP_CLI::error( 'The active provider does not support master key rotation.' );
 		}
 

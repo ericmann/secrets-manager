@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Tests for WP-CLI command logic via WP_Secrets_Manager.
  *
@@ -22,7 +25,7 @@ class Test_CLI extends WP_UnitTestCase {
 	/**
 	 * Provider instance.
 	 *
-	 * @var Provider_Encrypted_Options
+	 * @var WP_Secrets_Provider_Encrypted_Options
 	 */
 	private $provider;
 
@@ -41,7 +44,7 @@ class Test_CLI extends WP_UnitTestCase {
 
 		WP_Secrets_Manager::reset();
 
-		$this->provider = new Provider_Encrypted_Options();
+		$this->provider = new WP_Secrets_Provider_Encrypted_Options();
 		$this->provider->reset_cache();
 
 		$this->manager = WP_Secrets_Manager::get_instance();
@@ -54,10 +57,10 @@ class Test_CLI extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		foreach ( $this->created_keys as $key ) {
-			delete_option( Provider_Encrypted_Options::option_name( $key ) );
+			delete_option( WP_Secrets_Provider_Encrypted_Options::option_name( $key ) );
 		}
 
-		delete_option( Provider_Encrypted_Options::MASTER_KEY_OPTION );
+		delete_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION );
 
 		$this->created_keys = array();
 

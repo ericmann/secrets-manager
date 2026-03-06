@@ -91,13 +91,13 @@ class WP_Secrets_Admin_Page {
 								?>
 							</td>
 						</tr>
-						<?php if ( $active_provider instanceof Provider_Encrypted_Options ) : ?>
+						<?php if ( $active_provider instanceof WP_Secrets_Provider_Encrypted_Options ) : ?>
 							<tr>
 								<th scope="row"><?php esc_html_e( 'Key Source', 'wp-secrets-manager' ); ?></th>
 								<td>
 									<?php
 									$key_source = $active_provider->get_key_source();
-									if ( Provider_Encrypted_Options::KEY_SOURCE_CONSTANT === $key_source ) {
+									if ( WP_Secrets_Provider_Encrypted_Options::KEY_SOURCE_CONSTANT === $key_source ) {
 										esc_html_e( 'Dedicated WP_SECRETS_KEY constant', 'wp-secrets-manager' );
 									} else {
 										esc_html_e( 'Derived from WordPress salts (LOGGED_IN_KEY + LOGGED_IN_SALT)', 'wp-secrets-manager' );

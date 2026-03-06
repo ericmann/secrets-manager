@@ -1,6 +1,9 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
- * Provider interface contract tests for Provider_Encrypted_Options.
+ * Provider interface contract tests for WP_Secrets_Provider_Encrypted_Options.
  *
  * Verifies that the encrypted options provider properly implements
  * the WP_Secrets_Provider interface contract. Every assertion here
@@ -15,7 +18,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * Provider under test.
 	 *
-	 * @var Provider_Encrypted_Options
+	 * @var WP_Secrets_Provider_Encrypted_Options
 	 */
 	private $provider;
 
@@ -32,10 +35,10 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 
-		$this->provider = new Provider_Encrypted_Options();
+		$this->provider = new WP_Secrets_Provider_Encrypted_Options();
 		$this->provider->reset_cache();
 
-		delete_option( Provider_Encrypted_Options::MASTER_KEY_OPTION );
+		delete_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION );
 	}
 
 	/**
@@ -43,10 +46,10 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		foreach ( $this->created_keys as $key ) {
-			delete_option( Provider_Encrypted_Options::option_name( $key ) );
+			delete_option( WP_Secrets_Provider_Encrypted_Options::option_name( $key ) );
 		}
 
-		delete_option( Provider_Encrypted_Options::MASTER_KEY_OPTION );
+		delete_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION );
 
 		$this->created_keys = array();
 
@@ -63,15 +66,15 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_get_returns_null_for_nonexistent_key() {
 		$this->assertNull( $this->provider->get( 'test/does_not_exist' ) );
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::set
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_set_then_get_returns_same_value() {
 		$key   = 'test/roundtrip';
@@ -84,8 +87,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::set
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_set_overwrites_existing_value() {
 		$key = 'test/overwrite';
@@ -99,7 +102,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::delete
+	 * @covers WP_Secrets_Provider_Encrypted_Options::delete
 	 */
 	public function test_delete_returns_true_for_existing_key() {
 		$key = 'test/delete_existing';
@@ -111,21 +114,21 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::delete
+	 * @covers WP_Secrets_Provider_Encrypted_Options::delete
 	 */
 	public function test_delete_returns_false_for_nonexistent_key() {
 		$this->assertFalse( $this->provider->delete( 'test/never_stored' ) );
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::exists
+	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
 	 */
 	public function test_exists_returns_false_for_nonexistent_key() {
 		$this->assertFalse( $this->provider->exists( 'test/no_such_key' ) );
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::exists
+	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
 	 */
 	public function test_exists_returns_true_after_set() {
 		$key = 'test/exists_after_set';
@@ -137,8 +140,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::exists
-	 * @covers Provider_Encrypted_Options::delete
+	 * @covers WP_Secrets_Provider_Encrypted_Options::exists
+	 * @covers WP_Secrets_Provider_Encrypted_Options::delete
 	 */
 	public function test_exists_returns_false_after_delete() {
 		$key = 'test/exists_then_delete';
@@ -151,7 +154,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::list_keys
+	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_returns_empty_for_no_matches() {
 		$keys = $this->provider->list_keys( 'nonexistent-prefix/' );
@@ -161,7 +164,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::list_keys
+	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_returns_matching_keys() {
 		$this->track_key( 'test/list_a' );
@@ -179,7 +182,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * list_keys() must return only key name strings, never actual secret values.
 	 *
-	 * @covers Provider_Encrypted_Options::list_keys
+	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_never_returns_values() {
 		$key   = 'test/value_leak_check';
@@ -197,7 +200,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::list_keys
+	 * @covers WP_Secrets_Provider_Encrypted_Options::list_keys
 	 */
 	public function test_list_keys_filters_by_prefix() {
 		$this->track_key( 'alpha/key1' );
@@ -217,7 +220,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::health_check
+	 * @covers WP_Secrets_Provider_Encrypted_Options::health_check
 	 */
 	public function test_health_check_returns_valid_status() {
 		$result = $this->provider->health_check();
@@ -229,7 +232,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::get_id
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get_id
 	 */
 	public function test_get_id_returns_non_empty_string() {
 		$id = $this->provider->get_id();
@@ -239,7 +242,7 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Provider_Encrypted_Options::get_name
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get_name
 	 */
 	public function test_get_name_returns_non_empty_string() {
 		$name = $this->provider->get_name();
@@ -251,8 +254,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * Keys with dots, hyphens, and underscores must be handled correctly.
 	 *
-	 * @covers Provider_Encrypted_Options::set
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_special_characters_in_key_handled() {
 		$key   = 'test/my-key_name.v2';
@@ -267,8 +270,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * An empty string is a valid secret value and must survive round-trip.
 	 *
-	 * @covers Provider_Encrypted_Options::set
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_empty_string_value_stored_correctly() {
 		$key = 'test/empty_value';
@@ -282,8 +285,8 @@ class Test_Provider_Interface extends WP_UnitTestCase {
 	/**
 	 * A 4 KB random payload must survive encryption round-trip.
 	 *
-	 * @covers Provider_Encrypted_Options::set
-	 * @covers Provider_Encrypted_Options::get
+	 * @covers WP_Secrets_Provider_Encrypted_Options::set
+	 * @covers WP_Secrets_Provider_Encrypted_Options::get
 	 */
 	public function test_large_value_stored_correctly() {
 		$key   = 'test/large_payload';

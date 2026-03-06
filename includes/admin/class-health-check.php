@@ -120,7 +120,7 @@ class WP_Secrets_Health_Check {
 		$manager  = WP_Secrets_Manager::get_instance();
 		$provider = $manager->get_active_provider();
 
-		if ( ! $provider instanceof Provider_Encrypted_Options ) {
+		if ( ! $provider instanceof WP_Secrets_Provider_Encrypted_Options ) {
 			return array(
 				'label'       => __( 'Secrets storage is configured', 'wp-secrets-manager' ),
 				'status'      => 'good',
@@ -143,7 +143,7 @@ class WP_Secrets_Health_Check {
 
 		$key_source = $provider->get_key_source();
 
-		if ( Provider_Encrypted_Options::KEY_SOURCE_FALLBACK === $key_source ) {
+		if ( WP_Secrets_Provider_Encrypted_Options::KEY_SOURCE_FALLBACK === $key_source ) {
 			return array(
 				'label'       => __( 'Secrets encrypted with key derived from WordPress salts', 'wp-secrets-manager' ),
 				'status'      => 'recommended',
@@ -207,7 +207,7 @@ class WP_Secrets_Health_Check {
 			),
 		);
 
-		if ( $provider instanceof Provider_Encrypted_Options ) {
+		if ( $provider instanceof WP_Secrets_Provider_Encrypted_Options ) {
 			$fields['key_source'] = array(
 				'label' => __( 'Key Source', 'wp-secrets-manager' ),
 				'value' => $provider->get_key_source(),
@@ -218,7 +218,7 @@ class WP_Secrets_Health_Check {
 			);
 			$fields['master_key_exists'] = array(
 				'label' => __( 'Master Key Stored', 'wp-secrets-manager' ),
-				'value' => false !== get_option( Provider_Encrypted_Options::MASTER_KEY_OPTION, false ) ? __( 'Yes', 'wp-secrets-manager' ) : __( 'No (will be created on first use)', 'wp-secrets-manager' ),
+				'value' => false !== get_option( WP_Secrets_Provider_Encrypted_Options::MASTER_KEY_OPTION, false ) ? __( 'Yes', 'wp-secrets-manager' ) : __( 'No (will be created on first use)', 'wp-secrets-manager' ),
 			);
 		}
 

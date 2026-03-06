@@ -71,7 +71,7 @@ final class WP_Secrets_Manager {
 				sprintf(
 					/* translators: %s: provider ID */
 					esc_html__( 'A secrets provider with ID "%s" is already registered.', 'wp-secrets-manager' ),
-					$id
+					esc_html( $id )
 				),
 				'0.1.0'
 			);

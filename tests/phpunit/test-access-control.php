@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Tests for access control in WP_Secrets_Manager and WP_Secrets_Context.
  *

@@ -30,7 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Encrypted secrets storage using libsodium and wp_options.
  */
-class Provider_Encrypted_Options implements WP_Secrets_Provider {
+class WP_Secrets_Provider_Encrypted_Options implements WP_Secrets_Provider {
 
 	/**
 	 * Prefix applied to secret option names.
@@ -304,13 +304,13 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 			try {
 				$master_key = $this->decrypt( $stored, $previous_key, '__master_key__' );
 			} catch ( WP_Secrets_Exception $e ) {
-				throw new WP_Secrets_Exception(
-					__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'wp-secrets-manager' ),
-					0,
-					$e,
-					'__master_key__',
-					$this->get_id()
-				);
+		throw new WP_Secrets_Exception(
+				esc_html__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'wp-secrets-manager' ),
+				0,
+				$e,
+				sanitize_key( '__master_key__' ),
+				sanitize_key( $this->get_id() )
+			);
 			}
 
 			// Re-encrypt master key under the new secrets key.
@@ -328,11 +328,11 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 		}
 
 		throw new WP_Secrets_Exception(
-			__( 'Cannot decrypt master key. If you recently changed WP_SECRETS_KEY, set WP_SECRETS_KEY_PREVIOUS to the old value.', 'wp-secrets-manager' ),
+			esc_html__( 'Cannot decrypt master key. If you recently changed WP_SECRETS_KEY, set WP_SECRETS_KEY_PREVIOUS to the old value.', 'wp-secrets-manager' ),
 			0,
 			null,
-			'__master_key__',
-			$this->get_id()
+			sanitize_key( '__master_key__' ),
+			sanitize_key( $this->get_id() )
 		);
 	}
 
@@ -376,11 +376,11 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 			$ciphertext = sodium_crypto_secretbox( $plaintext, $nonce, $encryption_key );
 		} catch ( \Exception $e ) {
 			throw new WP_Secrets_Exception(
-				__( 'Encryption failed.', 'wp-secrets-manager' ),
+				esc_html__( 'Encryption failed.', 'wp-secrets-manager' ),
 				0,
 				$e,
-				$context_key,
-				$this->get_id()
+				sanitize_key( $context_key ),
+				sanitize_key( $this->get_id() )
 			);
 		}
 
@@ -403,22 +403,22 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 		$decoded = base64_decode( $stored, true );
 		if ( false === $decoded ) {
 			throw new WP_Secrets_Exception(
-				__( 'Invalid stored ciphertext (base64 decode failed).', 'wp-secrets-manager' ),
+				esc_html__( 'Invalid stored ciphertext (base64 decode failed).', 'wp-secrets-manager' ),
 				0,
 				null,
-				$context_key,
-				$this->get_id()
+				sanitize_key( $context_key ),
+				sanitize_key( $this->get_id() )
 			);
 		}
 
 		$min_length = SODIUM_CRYPTO_SECRETBOX_NONCEBYTES + SODIUM_CRYPTO_SECRETBOX_MACBYTES;
 		if ( strlen( $decoded ) < $min_length ) {
 			throw new WP_Secrets_Exception(
-				__( 'Stored ciphertext is too short to contain a valid nonce and payload.', 'wp-secrets-manager' ),
+				esc_html__( 'Stored ciphertext is too short to contain a valid nonce and payload.', 'wp-secrets-manager' ),
 				0,
 				null,
-				$context_key,
-				$this->get_id()
+				sanitize_key( $context_key ),
+				sanitize_key( $this->get_id() )
 			);
 		}
 
@@ -429,21 +429,21 @@ class Provider_Encrypted_Options implements WP_Secrets_Provider {
 			$plaintext = sodium_crypto_secretbox_open( $ciphertext, $nonce, $encryption_key );
 		} catch ( \SodiumException $e ) {
 			throw new WP_Secrets_Exception(
-				__( 'Decryption failed.', 'wp-secrets-manager' ),
+				esc_html__( 'Decryption failed.', 'wp-secrets-manager' ),
 				0,
 				$e,
-				$context_key,
-				$this->get_id()
+				sanitize_key( $context_key ),
+				sanitize_key( $this->get_id() )
 			);
 		}
 
 		if ( false === $plaintext ) {
 			throw new WP_Secrets_Exception(
-				__( 'Decryption failed. The key may have changed or the data is corrupt.', 'wp-secrets-manager' ),
+				esc_html__( 'Decryption failed. The key may have changed or the data is corrupt.', 'wp-secrets-manager' ),
 				0,
 				null,
-				$context_key,
-				$this->get_id()
+				sanitize_key( $context_key ),
+				sanitize_key( $this->get_id() )
 			);
 		}
 

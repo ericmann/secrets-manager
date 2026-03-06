@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * Tests for the WP Secrets public API.
  *
@@ -41,7 +44,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 		WP_Secrets_Manager::reset();
 
 		$manager = WP_Secrets_Manager::get_instance();
-		$manager->register_provider( new Provider_Encrypted_Options() );
+		$manager->register_provider( new WP_Secrets_Provider_Encrypted_Options() );
 		$manager->select_provider();
 	}
 
@@ -50,7 +53,7 @@ class Secrets_API_Test extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		foreach ( $this->test_keys as $key ) {
-			$option = Provider_Encrypted_Options::option_name( $key );
+			$option = WP_Secrets_Provider_Encrypted_Options::option_name( $key );
 			delete_option( $option );
 		}
 

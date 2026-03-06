@@ -32,7 +32,7 @@ require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-context.php';
 require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-audit.php';
 require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets-manager.php';
 require_once WP_SECRETS_MANAGER_DIR . 'includes/class-wp-secrets.php';
-require_once WP_SECRETS_MANAGER_DIR . 'includes/providers/class-provider-encrypted-options.php';
+require_once WP_SECRETS_MANAGER_DIR . 'includes/providers/class-wp-secrets-provider-encrypted-options.php';
 require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-admin-page.php';
 require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
 
@@ -43,6 +43,7 @@ require_once WP_SECRETS_MANAGER_DIR . 'includes/admin/class-health-check.php';
  * @param array  $context Optional. Additional context passed to the provider.
  * @return string|null The secret value, or null if not found.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function get_secret( string $key, array $context = [] ): ?string {
 	return WP_Secrets::get( $key, $context );
 }
@@ -55,6 +56,7 @@ function get_secret( string $key, array $context = [] ): ?string {
  * @param array  $context Optional. Additional context.
  * @return bool True on success.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function set_secret( string $key, string $value, array $context = [] ): bool {
 	return WP_Secrets::set( $key, $value, $context );
 }
@@ -66,6 +68,7 @@ function set_secret( string $key, string $value, array $context = [] ): bool {
  * @param array  $context Optional. Additional context.
  * @return bool True on success, false if not found.
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function delete_secret( string $key, array $context = [] ): bool {
 	return WP_Secrets::delete( $key, $context );
 }
@@ -77,6 +80,7 @@ function delete_secret( string $key, array $context = [] ): bool {
  * @param array  $context Optional. Additional context.
  * @return bool
  */
+// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Intentional public API.
 function secret_exists( string $key, array $context = [] ): bool {
 	return WP_Secrets::exists( $key, $context );
 }
@@ -97,7 +101,7 @@ function wp_secrets_register_provider( WP_Secrets_Provider $provider ): bool {
  */
 function wp_secrets_manager_init() {
 	$manager = WP_Secrets_Manager::get_instance();
-	$manager->register_provider( new Provider_Encrypted_Options() );
+	$manager->register_provider( new WP_Secrets_Provider_Encrypted_Options() );
 
 	/**
 	 * Fires when providers should be registered.

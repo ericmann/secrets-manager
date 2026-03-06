@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 /**
  * PHPUnit bootstrap file for WP Secrets Manager tests.
  *
