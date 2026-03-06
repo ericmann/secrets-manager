@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Secrets Manager
- * Plugin URI:  https://github.com/ericmann/wp-secrets-manager
+ * Plugin URI:  https://github.com/ericmann/secrets-manager
  * Description: A standardized secrets management API for WordPress. Provides get_secret() and set_secret() with automatic encryption and a pluggable provider interface for external backends.
  * Version:     0.1.0
  * Author:      Eric Mann
