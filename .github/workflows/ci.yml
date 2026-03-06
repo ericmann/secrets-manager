@@ -6,74 +6,75 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }}
-    runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php }}${{ matrix.wp != 'latest' && format( ' (WP {0})', matrix.wp ) || '' }}
+    runs-on: ubuntu-24.04
 
     strategy:
       fail-fast: false
       matrix:
-        php: [ '7.2', '7.3', '7.4', '8.0', '8.1', '8.2', '8.3' ]
-        wp: [ 'latest' ]
+        php:
+          - '8.3'
+          - '8.2'
+          - '8.1'
+          - '8.0'
+          - '7.4'
+          - '7.3'
+          - '7.2'
+        wp:
+          - latest
         include:
           - php: '7.2'
             wp: '6.9'
 
-    services:
-      mysql:
-        image: mariadb:10.11
-        env:
-          MARIADB_ROOT_PASSWORD: root
-          MARIADB_DATABASE: wordpress_tests
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+    env:
+      WP_ENV_PHP_VERSION: ${{ matrix.php }}
+      WP_ENV_CORE: ${{ format( 'https://wordpress.org/wordpress-{0}.zip', matrix.wp ) }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y subversion
-
-      - name: Set up PHP ${{ matrix.php }}
+      - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
-          extensions: sodium, mysqli
-          coverage: none
-          tools: composer
+          php-version: '8.2'
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
-          restore-keys: php-${{ matrix.php }}-composer-
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm install
+
+      - name: Start Docker environment
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: npm run env start
 
       - name: Install Composer dependencies
-        run: composer install --prefer-dist --no-progress
+        run: npm run composer install
 
-      - name: Install WordPress test suite
-        run: bash bin/install-wp-tests.sh wordpress_tests root root 127.0.0.1 ${{ matrix.wp }}
+      - name: Versions
+        run: |
+          npm run env run tests-cli php -- -v
+          npm run env run tests-cli wp core version
 
       - name: Run tests
-        run: composer test
+        run: npm run test
 
   coding-standards:
     name: Coding Standards
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout

@@ -10,15 +10,20 @@ if ( file_exists( dirname( __DIR__ ) . '/vendor/autoload.php' ) ) {
 	require_once dirname( __DIR__ ) . '/vendor/autoload.php';
 }
 
-// Load the WordPress test library.
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
 if ( ! $_tests_dir ) {
-	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+	// wp-env places the test library here.
+	if ( file_exists( '/wordpress-phpunit/includes/functions.php' ) ) {
+		$_tests_dir = '/wordpress-phpunit';
+	} else {
+		$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+	}
 }
 
 if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
-	echo "Could not find {$_tests_dir}/includes/functions.php, have you run bin/install-wp-tests.sh?" . PHP_EOL;
+	echo "Could not find {$_tests_dir}/includes/functions.php." . PHP_EOL;
+	echo 'Have you started wp-env? Try: npm run env start' . PHP_EOL;
 	exit( 1 );
 }
 

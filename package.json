@@ -1,0 +1,15 @@
+{
+	"name": "wp-secrets-manager",
+	"private": true,
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"env": "wp-env",
+		"composer": "wp-env run tests-cli --env-cwd=wp-content/plugins/wp-secrets-manager composer --",
+		"test": "npm run composer test"
+	},
+	"devDependencies": {
+		"@wordpress/env": "^10.30.0"
+	}
+}
