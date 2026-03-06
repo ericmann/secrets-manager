@@ -304,11 +304,10 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 			try {
 				$master_key = $this->decrypt( $stored, $previous_key, '__master_key__' );
 			} catch ( Secrets_Exception $e ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
-		throw new Secrets_Exception(
+				throw new Secrets_Exception(
 				esc_html__( 'Cannot decrypt master key with current or previous secrets key. Secrets are inaccessible.', 'secrets-manager' ),
 				0,
-				$e,
+				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( '__master_key__' ),
 				sanitize_key( $this->get_id() )
 			);
@@ -376,11 +375,10 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 			$nonce      = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 			$ciphertext = sodium_crypto_secretbox( $plaintext, $nonce, $encryption_key );
 		} catch ( \Exception $e ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
 			throw new Secrets_Exception(
 				esc_html__( 'Encryption failed.', 'secrets-manager' ),
 				0,
-				$e,
+				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( $context_key ),
 				sanitize_key( $this->get_id() )
 			);
@@ -430,11 +428,10 @@ class Secrets_Provider_Encrypted_Options implements Secrets_Provider {
 		try {
 			$plaintext = sodium_crypto_secretbox_open( $ciphertext, $nonce, $encryption_key );
 		} catch ( \SodiumException $e ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a chained exception, not output.
 			throw new Secrets_Exception(
 				esc_html__( 'Decryption failed.', 'secrets-manager' ),
 				0,
-				$e,
+				$e, // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- chained exception, not output.
 				sanitize_key( $context_key ),
 				sanitize_key( $this->get_id() )
 			);
